@@ -1,28 +1,30 @@
-import discord
-import asyncio
 import json
 from pprint import pprint
 
+from discord.ext import commands
+
 try:
-	with open('config.json') as file:
-		config = json.load(file)
-		pprint(config)
-except: 
-	print("There was an error reading from the config file, please ensure you have one!")
+    with open("config.json") as file:
+        config = json.load(file)
+        pprint(config)
+except:
+    print("There was an error reading from the config file, please ensure you have one!")
 
-token = config["token"]
 prefix = config["prefix"]
-
-bot = discord.Client()
+token = config["token"]
+bot = commands.Bot(command_prefix = prefix)
 
 @bot.event
 async def on_ready():
-	print("Logged in as ", bot.user.name)
+    print(f"Logged in as {bot.user.name}")
 
-@bot.event
-async def on_message(message):
-	if message.content.startswith(prefix):
-		if "ping" in message.content:
-			pong = await bot.send_message(message.channel, "Pong!")
+
+@bot.command(name="ping")
+async def ping(ctx):
+    await ctx.send(f"Pong! {round(bot.latency, 1)}")
+
+@bot.command()
+async def test(ctx):
+	await ctx.send("REEEEEEE")
 
 bot.run(token)
